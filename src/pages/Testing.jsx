@@ -4,6 +4,7 @@ import AnswersForm from "../components/view/AnswersForm";
 import Tester from "../components/logic/Tester";
 import Graph from "../components/view/Graph";
 import SourceCategoryForm from "../components/view/SourceCategoryForm";
+import Statistics from "../components/view/Statistics";
 
 const Table = styled.table`
     width: 100%;
@@ -34,7 +35,8 @@ export const nodeAttrs = {
 }
 export const modes = {
     categories: "categories",
-    testing: "testing"
+    testing: "testing",
+    statistics: "statistics"
 }
 
 class Testing extends Component {
@@ -54,6 +56,7 @@ class Testing extends Component {
         this.onCategoryEnd = this.onCategoryEnd.bind(this);
         this.onCategoryAdd = this.onCategoryAdd.bind(this);
         this.onTestingEnd = this.onTestingEnd.bind(this);
+        this.onReset = this.onReset.bind(this);
     }
 
     setGraphComponent(graphComponent) {
@@ -102,7 +105,14 @@ class Testing extends Component {
     }
 
     onTestingEnd() {
+        if (this.state.categoryToGraphMapping.length === 0) {
+            alert("Необходимо добавить хотя бы одну исходную категорию.");
+            return;
+        }
 
+        this.state.mode = modes.statistics;
+        this.showAllGraphs();
+        this.forceUpdate();
     }
 
     showOnlyCurrentGraph() {
@@ -112,6 +122,14 @@ class Testing extends Component {
 
     showAllGraphs() {
         this.state.categoryToGraphMapping.forEach(value => value.visible = true);
+        this.onStructureUpdate();
+    }
+
+    onReset() {
+        this.state.structure = {nodes: [], edges: []};
+        this.state.categoryToGraphMapping = [];
+        this.state.currentGraphId = 1;
+        this.state.mode = modes.categories;
         this.onStructureUpdate();
     }
 
@@ -140,6 +158,10 @@ class Testing extends Component {
                     onTestingEnd={this.onTestingEnd}
                     onShowingGraphChange={this.onStructureUpdate}
                 />;
+                break;
+
+            case modes.statistics:
+                section = <Statistics structure={this.state.structure} onReset={this.onReset}/>;
                 break;
 
             default:
