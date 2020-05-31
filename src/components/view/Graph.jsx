@@ -2,6 +2,7 @@ import React, {Component} from 'react'
 import {EdgeShapes, RandomizeNodePositions, Sigma} from 'react-sigma';
 import {SigmaGraphLoader} from "../logic/SigmaGraphLoader";
 import styled from "styled-components";
+import {nodeAttrs, nodeTypes} from "../../pages/Testing";
 
 const UL = styled.ul`
     font-size: 17px;
@@ -27,15 +28,7 @@ const DOT = styled.div`
     margin-right: 5px;
 `
 
-const nodeTypes = {
-    question: "question",
-    answer: "answer"
-}
-const nodeAttrs = {
-    initial: "initial",
-    current: "current",
-    limit: "limit"
-}
+
 const colors = {
     initial: '#d70000',
     answer: '#2390e8',
