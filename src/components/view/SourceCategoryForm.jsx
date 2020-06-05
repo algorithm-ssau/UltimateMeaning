@@ -80,7 +80,7 @@ export default class SourceCategoryForm extends Component {
                 <tbody>
                 {this.props.categoryToGraphMapping.map(function (categoryToGraph) {
                     return <tr>
-                        <td>{categoryToGraph.sourceCategory.text}</td>
+                        <td>{categoryToGraph.sourceCategory.text + "?"}</td>
                         <td>
                             <input type="checkbox" id={categoryToGraph.sourceCategory.id}
                                    name={categoryToGraph.sourceCategory.id}
@@ -108,7 +108,7 @@ export default class SourceCategoryForm extends Component {
                     <option value={""}/>
                     {this.getAvailableSourceCategories().map(function (category) {
                         return <option value={category.id}>
-                            {category.text}
+                            {category.text + "?"}
                         </option>;
                     })}
                 </select>
