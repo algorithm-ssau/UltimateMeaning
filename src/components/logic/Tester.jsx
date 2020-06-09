@@ -35,6 +35,12 @@ export default class Tester {
     }
 
     addNewAnswer(newAnswerText) {
+        let existingAnswer = this.getAvailableAnswers().find(node => node.text === newAnswerText);
+        if (existingAnswer) {
+            this.addOldAnswer(existingAnswer.id);
+            return;
+        }
+
         const newNode = {
             id: this.currentGraphId + "n" + this.nextId++,
             graphIds: new Set().add(this.currentGraphId),
