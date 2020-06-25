@@ -101,7 +101,7 @@ export default class Graph extends Component {
     }
 
     render() {
-        return <div>
+        return <div id="graph">
             <div>
                 <UL>
                     <LI><DOT style={{background: colors.initial}}/>Исходная категория</LI>

@@ -1,6 +1,23 @@
 import React, {Component} from "react";
 import StatisticsCalculator from "../logic/StatisticsCalculator";
 import styled from "styled-components";
+import * as html2canvas from 'html2canvas';
+import {nodeAttrs} from "../../pages/Testing";
+
+const CategoriesTitle = styled.p`
+    margin-top: 20px;
+    margin-bottom: 0;
+`
+const Categories = styled.div`
+    height: 239px;
+    overflow: auto;
+    padding: 10px;
+    padding-left: 20px;
+    border: 1px solid gray;
+`
+const Category = styled.p`
+
+`
 
 const Title = styled.h1`
     text-align: center;
@@ -20,13 +37,65 @@ const CancelButton = styled.a.attrs({
     color: #fff !important;
 `
 
+const Button = styled.button.attrs({
+    className: `btn btn-primary`,
+})`
+    margin: 15px 15px 15px 0px;
+`
+
 export default class Statistics extends Component {
     constructor(props) {
         super(props)
         this.values = new StatisticsCalculator().analyze(props.structure);
     }
 
+    getUltimateMeanings(structure) {
+        return structure.nodes
+            .filter(node => node.attrs.includes(nodeAttrs.limit))
+            .map(node => node.text);
+    }
+
     render() {
+        const capture = () => {
+            html2canvas(document.querySelector("#graph"))
+                .then(function (canvas) {
+                    const base64URL = canvas.toDataURL('image/jpeg').replace('image/jpeg', 'image/octet-stream');
+                    const element = document.createElement('a');
+                    element.setAttribute('href', base64URL);
+                    element.setAttribute('download', 'image.png');
+                    element.style.display = 'none';
+                    document.body.appendChild(element);
+                    element.click();
+                    document.body.removeChild(element);
+                });
+        };
+
+        const textDownload = () => {
+            const element = document.createElement('a');
+            let content = "";
+            content += "Абсолютное число предельных категорий: ";
+            content += this.values.limitCategoriesCount + "\n";
+            content += "Абсолютное число узловых категорий: ";
+            content += this.values.nodalCategoriesCount + "\n";
+            content += "Индекс связности полученной структуры: ";
+            content += this.values.connectivityIndex + "\n";
+            content += "Абсолютное число всех неповторяющихся категорий: ";
+            content += this.values.allCategoriesCount + "\n";
+            content += "Средняя длина цепей: ";
+            content += this.values.averageChainsLength + "\n";
+            content += "Продуктивность: ";
+            content += this.values.productivity + "\n";
+            content += "\nНайденные предельные смыслы:\n"
+            const categories = this.getUltimateMeanings(this.props.structure);
+            categories.forEach(text => content += text + "\n");
+            element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(content));
+            element.setAttribute('download', "Statistics.txt");
+            element.style.display = 'none';
+            document.body.appendChild(element);
+            element.click();
+            document.body.removeChild(element);
+        };
+
         return (
             <div>
                 <Title>Статистика</Title>
@@ -64,7 +133,17 @@ export default class Statistics extends Component {
                     </tr>
                     </tbody>
                 </Table>
+                <CategoriesTitle>Найденные предельные смыслы:</CategoriesTitle>
+                <Categories>
+                    {
+                        this.getUltimateMeanings(this.props.structure).map(text => {
+                            return <Category>{text}</Category>;
+                        })
+                    }
+                </Categories>
                 <CancelButton onClick={this.props.onReset}>Начать сначала</CancelButton>
+                <Button onClick={textDownload}>Скачать статистику</Button>
+                <Button onClick={capture}>Скачать граф</Button>
             </div>
         );
     }
